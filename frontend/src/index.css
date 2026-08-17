@@ -1,0 +1,88 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  /* Surfaces. Deep blue-charcoal rather than flat black, meant to read
+     like a scanner or spectrum analyzer display, not a generic dark
+     mode toggle. */
+  --bg: #0e1116;
+  --surface: #161b23;
+  --surface-raised: #1d2430;
+  --border: #2a3140;
+  --border-soft: #202632;
+
+  /* Text */
+  --text-primary: #e9edf4;
+  --text-secondary: #8b93a5;
+  --text-tertiary: #565f72;
+
+  /* One accent color per band, used consistently everywhere a band
+     shows up: the spectrum strip, chart lines, badges. */
+  --band-24: #e8a33d;
+  --band-5: #4fc3d9;
+  --band-6: #a78bf0;
+
+  /* One color per diagnostic code. Hardware-limited is deliberately
+     neutral, since it isn't a fixable "problem" the way the others are. */
+  --diag-good: #4ade80;
+  --diag-hardware: #7c879c;
+  --diag-steering: #4fc3d9;
+  --diag-attenuated: #f0a63d;
+  --diag-far: #f0554b;
+  --diag-congested: #c77de8;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Shared column layout for the device table header and rows.
+     Defined once here so the two independent grid containers can
+     never drift out of alignment with each other. Widths match the
+     actual rendered size of BandSpectrum (132px) and SignalMeter
+     (120px); the last column is sized for the widest diagnostic
+     badge label ("Performing well"). */
+  --device-grid-cols: 1.6fr 132px 120px 1fr 150px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--band-5);
+  color: #0e1116;
+}
+
+/* visible keyboard focus everywhere, dashboards get navigated with a
+   keyboard more often than most pages */
+:focus-visible {
+  outline: 2px solid var(--band-5);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

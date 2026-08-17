@@ -1,0 +1,42 @@
+.band-spectrum {
+  display: flex;
+  gap: 4px;
+  width: 132px;
+}
+
+.band-spectrum__zone {
+  position: relative;
+  flex: 1;
+  height: 22px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+.band-spectrum__zone.is-supported {
+  background: color-mix(in srgb, var(--zone-color) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--zone-color) 55%, transparent);
+  color: var(--zone-color);
+}
+
+.band-spectrum__zone.is-unsupported {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-tertiary);
+}
+
+.band-spectrum__marker {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--zone-color);
+  box-shadow: 0 0 6px var(--zone-color);
+}

@@ -1,0 +1,33 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Python (backend)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+backend/data/telemetry_history.db
+
+# Node (frontend)
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Env files (both frontend and backend)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*

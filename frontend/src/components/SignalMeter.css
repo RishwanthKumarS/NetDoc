@@ -1,0 +1,37 @@
+.signal-meter {
+  width: 120px;
+}
+
+.signal-meter__bar {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--border-soft);
+  overflow: hidden;
+}
+
+.signal-meter__fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.signal-meter__fill.is-strong {
+  background: var(--diag-good);
+}
+
+.signal-meter__fill.is-fair {
+  background: var(--band-24);
+}
+
+.signal-meter__fill.is-weak {
+  background: var(--diag-far);
+}
+
+.signal-meter__figures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}

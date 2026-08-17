@@ -1,0 +1,91 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  flex-wrap: wrap;
+}
+
+.app-header__title h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+
+.app-header__title p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.app-header__distribution {
+  display: flex;
+  gap: 20px;
+}
+
+.app-header__band-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.app-header__band-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.app-header__band-value {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.app-header__status {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.app-header__flag {
+  font-size: 12px;
+  color: var(--diag-attenuated);
+  font-weight: 500;
+}
+
+.app-header__connection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.app-header__connection-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.app-header__connection.is-live .app-header__connection-dot {
+  background: var(--diag-good);
+  box-shadow: 0 0 6px var(--diag-good);
+}
+
+.app-header__connection.is-disconnected .app-header__connection-dot {
+  background: var(--diag-far);
+}
+
+@media (max-width: 700px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

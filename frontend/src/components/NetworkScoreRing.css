@@ -1,0 +1,29 @@
+.network-score-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.network-score-ring svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.network-score-ring__track {
+  stroke: var(--border-soft);
+}
+
+.network-score-ring__fill {
+  transition: stroke-dashoffset 0.6s ease, stroke 0.6s ease;
+}
+
+.network-score-ring__value {
+  position: relative;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+}
