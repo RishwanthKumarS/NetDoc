@@ -1,8 +1,9 @@
 """
 Entry point. Wires the simulator and the real-device tap into a small
 FastAPI app, and pushes updates to the dashboard over a WebSocket
-every couple of seconds. REST endpoints exist for a first page load
-and for pulling a single device's chart history.
+every couple of seconds. REST endpoints exist for a first page load,
+pulling a single device's chart history, and getting AI troubleshooting
+advice for a device that isn't performing well.
 """
 
 from __future__ import annotations
@@ -10,12 +11,16 @@ from __future__ import annotations
 import asyncio
 import time
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
+load_dotenv()
+
+from app.advice import AdviceError, get_troubleshooting_advice
 from app.capability import resolve_from_catalog
 from app.diagnostics import diagnose
-from app.local_wifi import read_local_adapter_state
+from app.local_wifi import read_local_adapter_state, read_local_mac_address
 from app.models import Band, CapabilityProfile, Device, TelemetrySample, WifiStandard
 from app.rate_tables import theoretical_max_mbps
 from app.simulator import NOISE_FLOOR_DBM, TelemetrySimulator
@@ -35,7 +40,11 @@ db_conn = get_connection()
 
 TICK_SECONDS = 2
 LOCAL_DEVICE_ID = "local-laptop"
-LOCAL_MAC = "AA:BB:CC:11:22:33"  # placeholder, we don't read the real MAC to keep this demo-safe
+
+# Keeps the most recently broadcast Device objects around so the
+# advice endpoint can look one up without re-ticking the simulator
+# (collect_devices() advances simulated state every time it's called).
+latest_devices: dict[str, Device] = {}
 
 
 def _build_local_device() -> Device | None:
@@ -81,7 +90,7 @@ def _build_local_device() -> Device | None:
         device_id=LOCAL_DEVICE_ID,
         name="This laptop",
         vendor="local adapter",
-        mac_address=LOCAL_MAC,
+        mac_address=read_local_mac_address(),
         is_real=True,
         capability=capability,
         telemetry=sample,
@@ -104,6 +113,7 @@ def collect_devices() -> list[Device]:
             device.telemetry.link_rate_mbps,
             device.diagnostic.code.value,
         )
+        latest_devices[device.device_id] = device
     prune_old_samples(db_conn)
     return devices
 
@@ -116,6 +126,18 @@ def get_devices() -> list[Device]:
 @app.get("/api/devices/{device_id}/history")
 def get_device_history(device_id: str, limit: int = 200) -> list[dict]:
     return get_history(db_conn, device_id, limit)
+
+
+@app.post("/api/devices/{device_id}/advice")
+async def get_device_advice(device_id: str) -> dict:
+    device = latest_devices.get(device_id)
+    if device is None:
+        raise HTTPException(status_code=404, detail="Unknown device, wait for the next telemetry tick and try again.")
+    try:
+        advice = await get_troubleshooting_advice(device)
+    except AdviceError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {"advice": advice}
 
 
 @app.websocket("/ws/telemetry")

@@ -1,0 +1,106 @@
+.fix-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 14, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+}
+
+.fix-modal {
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.fix-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.fix-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fix-modal::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 999px;
+}
+
+.fix-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.fix-modal__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--band-5);
+  margin: 0 0 4px;
+}
+
+.fix-modal__header h2 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  margin: 0;
+}
+
+.fix-modal__close {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.fix-modal__close:hover {
+  border-color: var(--band-5);
+  color: var(--text-primary);
+}
+
+.fix-modal__status {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.fix-modal__error {
+  font-size: 13px;
+  color: var(--diag-far);
+}
+
+.fix-modal__steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.fix-modal__steps li {
+  padding-left: 4px;
+}

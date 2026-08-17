@@ -9,3 +9,12 @@ export async function fetchDeviceHistory(deviceId: string): Promise<HistoryPoint
   }
   return response.json();
 }
+
+export async function fetchDeviceAdvice(deviceId: string): Promise<string> {
+  const response = await fetch(`${API_URL}/api/devices/${deviceId}/advice`, { method: "POST" });
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(data?.detail ?? `advice request failed: ${response.status}`);
+  }
+  return data.advice as string;
+}

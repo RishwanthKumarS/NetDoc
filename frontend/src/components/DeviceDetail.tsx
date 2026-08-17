@@ -4,17 +4,25 @@ import type { Device, HistoryPoint } from "../types/device";
 import { fetchDeviceHistory } from "../api/client";
 import { DiagnosticBadge } from "./DiagnosticBadge";
 import { BandSpectrum } from "./BandSpectrum";
-import { NetworkScoreRing } from "./NetworkScoreRing";
-import { NetworkScoreInfo } from "./NetworkScoreInfo";
-import { computeNetworkScore } from "../utils/networkScore";
+import { FixModal } from "./FixModal";
 import "./DeviceDetail.css";
 
 interface DeviceDetailProps {
   device: Device;
 }
 
+function computeYDomain(values: number[]): [number, number] {
+  if (values.length === 0) return [-95, -25];
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min;
+  const padding = Math.max(span * 0.25, 3);
+  return [Math.floor(min - padding), Math.ceil(max + padding)];
+}
+
 export function DeviceDetail({ device }: DeviceDetailProps) {
   const [history, setHistory] = useState<HistoryPoint[]>([]);
+  const [fixModalOpen, setFixModalOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -32,25 +40,27 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
     };
   }, [device.device_id]);
 
+  // close the modal if the person switches to a different device while it's open
+  useEffect(() => {
+    setFixModalOpen(false);
+  }, [device.device_id]);
+
   const chartData = history.map((point) => ({
     time: new Date(point.timestamp * 1000).toLocaleTimeString([], { minute: "2-digit", second: "2-digit" }),
     rssi: point.rssi_dbm,
     snr: point.snr_db,
   }));
 
+  const yDomain = computeYDomain(chartData.flatMap((point) => [point.rssi, point.snr]));
+
   const { telemetry, capability, diagnostic } = device;
-  const score = computeNetworkScore(device);
 
   return (
     <aside className="device-detail">
       <header className="device-detail__header">
-        <div className="device-detail__title-row">
-          <NetworkScoreRing score={score} size={52} strokeWidth={4} />
-          <NetworkScoreInfo />
-          <div>
-            <h2>{device.name}</h2>
-            <p className="device-detail__mac">{device.mac_address}</p>
-          </div>
+        <div>
+          <h2>{device.name}</h2>
+          <p className="device-detail__mac">{device.mac_address}</p>
         </div>
         <DiagnosticBadge code={diagnostic.code} />
       </header>
@@ -86,7 +96,7 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
               <CartesianGrid stroke="var(--border-soft)" vertical={false} />
               <XAxis dataKey="time" tick={{ fontSize: 10, fill: "var(--text-tertiary)" }} axisLine={false} tickLine={false} />
               <YAxis
-                domain={[-95, -25]}
+                domain={yDomain}
                 tick={{ fontSize: 10, fill: "var(--text-tertiary)" }}
                 axisLine={false}
                 tickLine={false}
@@ -112,7 +122,16 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
             Estimated distance from the router: ~{diagnostic.estimated_distance_m.toFixed(1)} m
           </p>
         )}
+        {diagnostic.code !== "GOOD" && (
+          <button className="device-detail__fix-btn" onClick={() => setFixModalOpen(true)}>
+            Fix ✨
+          </button>
+        )}
       </section>
+
+      {fixModalOpen && (
+        <FixModal deviceId={device.device_id} deviceName={device.name} onClose={() => setFixModalOpen(false)} />
+      )}
     </aside>
   );
 }

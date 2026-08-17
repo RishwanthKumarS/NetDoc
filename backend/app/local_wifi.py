@@ -17,7 +17,7 @@ import platform
 import re
 import subprocess
 
-from app.models import Band, WifiStandard
+from app.models import Band
 
 
 def _run(cmd: list[str]) -> str | None:
@@ -39,6 +39,53 @@ def read_local_adapter_state() -> dict | None:
         return _read_macos()
     return None
 
+def read_local_mac_address() -> str | None:
+    system = platform.system()
+
+    if system == "Windows":
+        output = _run(["getmac", "/fo", "csv", "/v"])
+        if not output:
+            return None
+
+        for line in output.splitlines():
+            if "Wi-Fi" not in line and "Wireless" not in line:
+                continue
+
+            mac_match = re.search(
+                r"([0-9A-Fa-f]{2}(?:[-:][0-9A-Fa-f]{2}){5})",
+                line,
+            )
+
+            if mac_match:
+                return mac_match.group(1)
+
+    elif system == "Linux":
+        output = _run(["ip", "link"])
+        if not output:
+            return None
+
+        mac_match = re.search(
+            r"link/ether\s+([0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5})",
+            output,
+        )
+
+        if mac_match:
+            return mac_match.group(1)
+
+    elif system == "Darwin":
+        output = _run(["ifconfig"])
+        if not output:
+            return None
+
+        mac_match = re.search(
+            r"ether\s+([0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5})",
+            output,
+        )
+
+        if mac_match:
+            return mac_match.group(1)
+
+    return None
 
 def _read_linux() -> dict | None:
     output = _run(["nmcli", "-t", "-f", "active,signal,chan,rate,freq", "dev", "wifi"])
