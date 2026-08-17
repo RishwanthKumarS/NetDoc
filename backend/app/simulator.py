@@ -110,7 +110,7 @@ def _make_mac(prefix: str, index: int) -> str:
 # diagnostic category at least once instead of leaving it to chance.
 _SCENARIO_PLAN = [
     # (catalog index, distance_m, wall_loss_db, band override, congestion, scenario)
-    (0, 4.0, 0.0, None, 0.05, "steady"),               # iPhone, close, clean -> GOOD
+    (0, 4.0, 0.0, None, 0.5, "steady"),               # iPhone, close, clean -> GOOD
     (1, 6.0, 0.0, None, 0.1, "steady"),                 # MacBook, close, clean -> GOOD
     (2, 3.0, 0.0, Band.GHZ_2_4, 0.05, "steady"),        # Galaxy S24, capable of 6GHz but parked on 2.4 -> BAND_STEERING
     (3, 5.0, 0.0, None, 0.75, "steady"),                # ThinkPad, good signal, congested air -> CONGESTED_LINK

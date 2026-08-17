@@ -20,7 +20,7 @@ export function Header({ devices, status }: HeaderProps) {
   return (
     <header className="app-header">
       <div className="app-header__title">
-        <h1>Wi-Fi Band Analyzer</h1>
+        <h1>NetDoc - Wi-Fi Band Analyzer</h1>
         <p>Watching {devices.length} clients across 2.4, 5 and 6 GHz</p>
       </div>
 

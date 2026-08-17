@@ -46,11 +46,11 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
       <header className="device-detail__header">
         <div className="device-detail__title-row">
           <NetworkScoreRing score={score} size={52} strokeWidth={4} />
+          <NetworkScoreInfo />
           <div>
             <h2>{device.name}</h2>
             <p className="device-detail__mac">{device.mac_address}</p>
           </div>
-          <NetworkScoreInfo />
         </div>
         <DiagnosticBadge code={diagnostic.code} />
       </header>
