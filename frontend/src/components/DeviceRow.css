@@ -24,6 +24,14 @@
   background: var(--surface-raised);
 }
 
+.device-row__field {
+  /* On desktop each field wrapper is invisible to the box model so
+     the grid columns defined by --device-grid-cols still line up
+     with the inner element (BandSpectrum, SignalMeter, etc.) exactly
+     as if the wrapper wasn't there. */
+  display: contents;
+}
+
 .device-row__identity {
   display: flex;
   flex-direction: column;
@@ -90,6 +98,46 @@
 @media (max-width: 900px) {
   .device-row {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .device-row__field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .device-row__field::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .device-row__field .band-spectrum,
+  .device-row__field .signal-meter {
+    width: auto;
+    max-width: none;
+    flex: 1;
+  }
+
+  .device-row__rate {
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: 420px) {
+  .device-row {
+    padding: 12px;
+  }
+
+  .device-row__field {
+    flex-wrap: wrap;
   }
 }

@@ -25,6 +25,8 @@
 .app-header__distribution {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
+  row-gap: 8px;
 }
 
 .app-header__band-count {
@@ -87,5 +89,32 @@
   .app-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .app-header__distribution {
+    gap: 14px;
+  }
+
+  .app-header__status {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-header__title h1 {
+    font-size: 17px;
+  }
+
+  .app-header__title p {
+    font-size: 12px;
+  }
+
+  .app-header__status {
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }

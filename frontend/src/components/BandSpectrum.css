@@ -1,12 +1,15 @@
 .band-spectrum {
   display: flex;
   gap: 4px;
-  width: 132px;
+  width: 100%;
+  max-width: 132px;
+  min-width: 0;
 }
 
 .band-spectrum__zone {
   position: relative;
   flex: 1;
+  min-width: 0;
   height: 22px;
   border-radius: 4px;
   display: flex;

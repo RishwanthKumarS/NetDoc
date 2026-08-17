@@ -1,5 +1,7 @@
 .signal-meter {
-  width: 120px;
+  width: 100%;
+  max-width: 120px;
+  min-width: 0;
 }
 
 .signal-meter__bar {
