@@ -27,7 +27,7 @@ function clamp(value: number): number {
 }
 
 /**
- * Red at 0, orange, yellow, then green at 100 — interpolated as RGB
+ * Red at 0, orange, yellow, then green at 100 -- interpolated as RGB
  * between stops so the ring shows shades within each band rather
  * than snapping between four flat colors.
  */

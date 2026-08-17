@@ -90,17 +90,26 @@
   color: var(--diag-far);
 }
 
-.fix-modal__steps {
+.fix-modal__typewriter {
   margin: 0;
-  padding-left: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-primary);
+  white-space: pre-wrap;
 }
 
-.fix-modal__steps li {
-  padding-left: 4px;
+.fix-modal__cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  margin-left: 1px;
+  background: var(--band-5);
+  vertical-align: text-bottom;
+  animation: fix-modal-blink 0.9s steps(1) infinite;
+}
+
+@keyframes fix-modal-blink {
+  50% {
+    opacity: 0;
+  }
 }

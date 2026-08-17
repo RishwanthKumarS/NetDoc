@@ -34,31 +34,23 @@ export function DeviceRow({ device, onSelect, selected }: DeviceRowProps) {
         </span>
       </div>
 
-      <div className="device-row__field" data-label="Band capability">
-        <BandSpectrum supportedBands={capability.supported_bands} activeBand={telemetry.active_band} />
+      <BandSpectrum supportedBands={capability.supported_bands} activeBand={telemetry.active_band} />
+
+      <SignalMeter rssiDbm={telemetry.rssi_dbm} snrDb={snr} />
+
+      <div className="device-row__rate">
+        <span
+          className="device-row__rate-value"
+          onMouseEnter={() => setShowRateTooltip(true)}
+          onMouseLeave={() => setShowRateTooltip(false)}
+        >
+          {telemetry.link_rate_mbps.toFixed(0)} Mbps
+          {showRateTooltip && <span className="device-row__rate-tooltip">{rateMBps} MB/s</span>}
+        </span>
+        <span className="device-row__rate-share">{rateShare}% of {telemetry.theoretical_max_mbps.toFixed(0)}</span>
       </div>
 
-      <div className="device-row__field" data-label="Signal">
-        <SignalMeter rssiDbm={telemetry.rssi_dbm} snrDb={snr} />
-      </div>
-
-      <div className="device-row__field" data-label="Link rate">
-        <div className="device-row__rate">
-          <span
-            className="device-row__rate-value"
-            onMouseEnter={() => setShowRateTooltip(true)}
-            onMouseLeave={() => setShowRateTooltip(false)}
-          >
-            {telemetry.link_rate_mbps.toFixed(0)} Mbps
-            {showRateTooltip && <span className="device-row__rate-tooltip">{rateMBps} MB/s</span>}
-          </span>
-          <span className="device-row__rate-share">{rateShare}% of {telemetry.theoretical_max_mbps.toFixed(0)}</span>
-        </div>
-      </div>
-
-      <div className="device-row__field" data-label="Diagnosis">
-        <DiagnosticBadge code={diagnostic.code} />
-      </div>
+      <DiagnosticBadge code={diagnostic.code} />
     </button>
   );
 }

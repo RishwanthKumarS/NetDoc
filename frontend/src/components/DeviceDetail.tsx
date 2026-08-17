@@ -5,10 +5,19 @@ import { fetchDeviceHistory } from "../api/client";
 import { DiagnosticBadge } from "./DiagnosticBadge";
 import { BandSpectrum } from "./BandSpectrum";
 import { FixModal } from "./FixModal";
+import { NetworkScoreRing } from "./NetworkScoreRing";
+import { NetworkScoreInfo } from "./NetworkScoreInfo";
+import { computeNetworkScore } from "../utils/networkScore";
 import "./DeviceDetail.css";
 
 interface DeviceDetailProps {
   device: Device;
+}
+
+// Normalizes a MAC address to colon-separated form, since some OS
+// commands (Windows' netsh in particular) report it with hyphens.
+function formatMacAddress(mac: string): string {
+  return mac.replace(/-/g, ":");
 }
 
 function computeYDomain(values: number[]): [number, number] {
@@ -40,7 +49,6 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
     };
   }, [device.device_id]);
 
-  // close the modal if the person switches to a different device while it's open
   useEffect(() => {
     setFixModalOpen(false);
   }, [device.device_id]);
@@ -54,15 +62,22 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
   const yDomain = computeYDomain(chartData.flatMap((point) => [point.rssi, point.snr]));
 
   const { telemetry, capability, diagnostic } = device;
+  const score = computeNetworkScore(device);
 
   return (
     <aside className="device-detail">
       <header className="device-detail__header">
-        <div>
-          <h2>{device.name}</h2>
-          <p className="device-detail__mac">{device.mac_address}</p>
+        <div className="device-detail__score-group">
+          <NetworkScoreRing score={score} size={76} strokeWidth={6} />
+          <NetworkScoreInfo />
         </div>
-        <DiagnosticBadge code={diagnostic.code} />
+        <div className="device-detail__right">
+          <DiagnosticBadge code={diagnostic.code} />
+          <div className="device-detail__identity">
+            <h2>{device.name}</h2>
+            <p className="device-detail__mac">{formatMacAddress(device.mac_address)}</p>
+          </div>
+        </div>
       </header>
 
       <section className="device-detail__section">
@@ -114,18 +129,20 @@ export function DeviceDetail({ device }: DeviceDetailProps) {
       </section>
 
       <section className="device-detail__section">
-        <h3>Diagnosis</h3>
+        <div className="device-detail__section-header">
+          <h3>Diagnosis</h3>
+          {diagnostic.code !== "GOOD" && (
+            <button className="device-detail__fix-btn" onClick={() => setFixModalOpen(true)}>
+              Fix ✨
+            </button>
+          )}
+        </div>
         <p className="device-detail__summary">{diagnostic.summary}</p>
         <p className="device-detail__detail">{diagnostic.detail}</p>
         {diagnostic.estimated_distance_m !== null && (
           <p className="device-detail__distance">
             Estimated distance from the router: ~{diagnostic.estimated_distance_m.toFixed(1)} m
           </p>
-        )}
-        {diagnostic.code !== "GOOD" && (
-          <button className="device-detail__fix-btn" onClick={() => setFixModalOpen(true)}>
-            Fix ✨
-          </button>
         )}
       </section>
 

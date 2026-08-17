@@ -8,10 +8,14 @@ interface FixModalProps {
   onClose: () => void;
 }
 
+const CHARS_PER_TICK = 2;
+const TICK_MS = 12;
+
 export function FixModal({ deviceId, deviceName, onClose }: FixModalProps) {
   const [advice, setAdvice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [typedLength, setTypedLength] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -19,6 +23,8 @@ export function FixModal({ deviceId, deviceName, onClose }: FixModalProps) {
     async function load() {
       setLoading(true);
       setError(null);
+      setAdvice(null);
+      setTypedLength(0);
       try {
         const result = await fetchDeviceAdvice(deviceId);
         if (!cancelled) setAdvice(result);
@@ -36,6 +42,22 @@ export function FixModal({ deviceId, deviceName, onClose }: FixModalProps) {
   }, [deviceId]);
 
   useEffect(() => {
+    if (!advice) return;
+    setTypedLength(0);
+    const interval = setInterval(() => {
+      setTypedLength((prev) => {
+        const next = prev + CHARS_PER_TICK;
+        if (next >= advice.length) {
+          clearInterval(interval);
+          return advice.length;
+        }
+        return next;
+      });
+    }, TICK_MS);
+    return () => clearInterval(interval);
+  }, [advice]);
+
+  useEffect(() => {
     function handleKey(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }
@@ -43,14 +65,7 @@ export function FixModal({ deviceId, deviceName, onClose }: FixModalProps) {
     return () => document.removeEventListener("keydown", handleKey);
   }, [onClose]);
 
-  // Groq replies as a plain numbered list; split into lines rather than
-  // pulling in a markdown parser for something this simple.
-  const steps = advice
-    ? advice
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean)
-    : [];
+  const isTyping = advice !== null && typedLength < advice.length;
 
   return (
     <div className="fix-modal__backdrop" onClick={onClose}>
@@ -66,14 +81,13 @@ export function FixModal({ deviceId, deviceName, onClose }: FixModalProps) {
         </header>
 
         <div className="fix-modal__body">
-          {loading && <p className="fix-modal__status">Asking Llama for troubleshooting steps…</p>}
+          {loading && <p className="fix-modal__status">Asking NetDoc AI for troubleshooting steps…</p>}
           {error && <p className="fix-modal__error">Couldn't get advice: {error}</p>}
-          {!loading && !error && (
-            <ol className="fix-modal__steps">
-              {steps.map((step, index) => (
-                <li key={index}>{step.replace(/^\d+[.)]\s*/, "")}</li>
-              ))}
-            </ol>
+          {!loading && !error && advice && (
+            <p className="fix-modal__typewriter">
+              {advice.slice(0, typedLength)}
+              {isTyping && <span className="fix-modal__cursor" />}
+            </p>
           )}
         </div>
       </div>

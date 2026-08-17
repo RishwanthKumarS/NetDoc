@@ -2,10 +2,10 @@
   background: var(--surface);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
   position: sticky;
   top: 24px;
   max-height: calc(100vh - 48px);
@@ -37,29 +37,43 @@
   background-color: var(--text-tertiary);
 }
 
-.device-detail__title-row {
+/* Ring sits on the left as a fixed-size block; the right side is a
+   flexible column (diagnosis badge on top, name/MAC underneath) that
+   simply fills the remaining width. Since the ring's box never
+   changes size and the badge/name column is independent of it, a
+   longer or shorter diagnosis label only affects its own column and
+   never shifts the ring or resizes the header as a whole. */
+.device-detail__header {
   display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.device-detail__score-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.device-detail__right {
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   min-width: 0;
+  flex: 1;
 }
 
-.device-detail__title-row > div {
+.device-detail__identity {
   min-width: 0;
 }
 
-.device-detail__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  min-width: 0;
-}
-
-.device-detail__header h2 {
+.device-detail__identity h2 {
   font-family: var(--font-display);
   font-size: 18px;
-  margin: 0 0 4px;
+  margin: 0 0 6px;
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -79,14 +93,14 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-secondary);
-  margin: 0 0 10px;
+  margin: 0 0 14px;
 }
 
 .device-detail__facts {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px 16px;
-  margin: 14px 0 0;
+  gap: 18px 20px;
+  margin: 18px 0 0;
   min-width: 0;
 }
 
@@ -96,7 +110,7 @@
 }
 
 .device-detail__facts dd {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-primary);
@@ -108,7 +122,7 @@
   background: var(--bg);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-sm);
-  padding: 8px 4px 0;
+  padding: 12px 4px 4px;
   min-width: 0;
 }
 
@@ -116,12 +130,12 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 14px;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
 }
 
 .device-detail__detail {
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-secondary);
   margin: 0;
   overflow-wrap: break-word;
@@ -129,61 +143,87 @@
 }
 
 .device-detail__distance {
-  margin: 10px 0 0;
+  margin: 14px 0 0;
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-tertiary);
 }
 
 .device-detail__fix-btn {
-  margin-top: 14px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: linear-gradient(135deg, var(--band-5), var(--band-6));
-  color: #0e1116;
-  border: none;
-  border-radius: var(--radius-sm);
+  gap: 5px;
+  padding: 6px 14px;
+  background: var(--band-5);
+  border: 1px solid var(--band-5);
+  border-radius: 999px;
+  color: var(--bg);
   font-family: var(--font-display);
+  font-size: 12px;
   font-weight: 600;
-  font-size: 13px;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: fix-btn-pulse 2.2s ease-in-out infinite;
 }
 
 .device-detail__fix-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(79, 195, 217, 0.35);
+  animation-play-state: paused;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--band-5) 22%, transparent);
 }
 
 .device-detail__fix-btn:active {
   transform: translateY(0);
 }
 
-/* Below this width the detail panel is assumed to stack under the
-   device list (single-column page layout) rather than sit beside it
-   as a sidebar, so a sticky, viewport-capped panel no longer makes
-   sense. */
+@keyframes fix-btn-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--band-5) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--band-5) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--band-5) 0%, transparent);
+  }
+}
+
+.device-detail__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+  min-width: 0;
+}
+
+.device-detail__section-header h3 {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device-detail__fix-btn {
+    animation: none;
+  }
+}
+
 @media (max-width: 900px) {
   .device-detail {
     position: static;
     max-height: none;
-    padding: 16px;
+    padding: 18px;
     top: auto;
   }
 }
 
 @media (max-width: 480px) {
-  .device-detail__facts {
-    grid-template-columns: 1fr;
-  }
-
   .device-detail__header {
     flex-direction: column;
+    align-items: flex-start;
   }
 
-  .device-detail__title-row {
-    width: 100%;
+  .device-detail__facts {
+    grid-template-columns: 1fr;
   }
 }
