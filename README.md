@@ -1,8 +1,9 @@
-# Wi-Fi Band Analyzer
+# NetDoc - Wi-Fi Band Analyzer
 
-PS-S01. A dashboard that watches connected Wi-Fi clients, compares what they're
-capable of against what they're actually getting, and explains why any of them
-are underperforming, instead of just showing raw signal numbers.
+NetDoc is a user-friendly dashboard that watches connected Wi-Fi clients,
+compares what they're capable of against what they're actually getting,
+and explains why any of them are underperforming, instead of just showing
+raw signal numbers.
 
 Built with no router or AP access. The data source is a synthetic telemetry
 engine that behaves like a real network would, plus one real device pulled
@@ -38,29 +39,29 @@ The dashboard expects the backend on `localhost:8000` by default. Copy
 ## Architecture
 
 ```
-┌───────────────────────┐   ┌────────────────────────────┐
-│  Synthetic Telemetry   │   │  Local OS Wi-Fi Query       │
+┌─────────────────────────┐   ┌─────────────────────────────┐
+│  Synthetic Telemetry    │   │  Local OS Wi-Fi Query       │
 │  Simulator              │   │  (nmcli / netsh / wdutil)   │
-│  backend/app/simulator │   │  backend/app/local_wifi.py  │
+│  backend/app/simulator  │   │  backend/app/local_wifi.py  │
 └───────────┬─────────────┘   └─────────────┬───────────────┘
-            │  10 virtual clients             │  this machine's real adapter
-            │  scripted RSSI, retries,        │  RSSI, channel, link rate
-            │  band, congestion                │
-            └───────────────┬────────────────┘
-                             ▼
+            │  10 virtual clients           │  this machine's real adapter
+            │  scripted RSSI, retries,      │  RSSI, channel, link rate
+            │  band, congestion             │
+            └───────────────┬───────────────┘
+                            ▼
                 capability.py + device_catalog.py
                 resolves what each device supports
-                             ▼
+                            ▼
                      diagnostics.py
               classifies why performance is what it is
-                             ▼
+                            ▼
                    main.py (FastAPI)
               REST for first load + device history
               WebSocket for the live feed, one tick every 2s
-                             ▼
+                            ▼
                   store.py (SQLite)
               keeps a 30 minute rolling history per device
-                             ▼
+                            ▼
                   React dashboard
         device table, band spectrum, signal meter, live chart
 ```
