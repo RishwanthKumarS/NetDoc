@@ -1,6 +1,6 @@
 """
 This is our stand-in for the "Hardware Device Fingerprint Database"
-dependency in the problem statement. In a real deployment you'd hit
+dependency in the problem statement. In a real deployment you would hit
 a Wi-Fi Alliance registry or a chipset lookup service. We don't have
 network access to anything like that during judging, so we ship a
 small local catalog of real-world device classes instead. It gets the

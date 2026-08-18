@@ -82,8 +82,8 @@ def _build_local_device() -> Device | None:
         noise_floor_dbm=NOISE_FLOOR_DBM,
         link_rate_mbps=state["link_rate_mbps"],
         theoretical_max_mbps=theoretical,
-        retry_rate_pct=0.0,
-        packet_loss_pct=0.0,
+        retry_rate_pct=state.get("retry_rate_pct", 0.0),
+        packet_loss_pct=state.get("packet_loss_pct", 0.0),
     )
     verdict = diagnose(capability, sample)
     return Device(
